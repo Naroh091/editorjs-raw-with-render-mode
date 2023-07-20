@@ -1,37 +1,22 @@
 ![](https://badgen.net/badge/CodeX%20Editor/v2.0/blue)
 
-# Raw HTML Tool for Editor.js
+# Raw HTML Tool for Editor.js with render mode
 
-Raw Tool for the [Editor.js](https://codex.so/editor) allows to include raw HTML code in your articles.
+The default raw Tool for the [Editor.js](https://codex.so/editor) works great, but... Wouldn't be nice to be able to preview how the code you're inserting will look like?
+
+Now you can! ✨
+
+![example.gif](docs%2Fexample.gif)
+
+Oh, and it also supports i18n!
 
 ![](https://capella.pics/5195d944-966d-40cf-8f86-78c6349d94cb.jpg)
 
-## Installation
-
-### Install via NPM
-
-Get the package
-
-```shell
-npm i --save-dev @editorjs/raw
-```
-
-Include module at your application
-
-```javascript
-const RawTool = require('@editorjs/raw');
-```
-
-### Download to your project's source dir
-
-1. Upload folder `dist` from repository
-2. Add `dist/bundle.js` file to your page.
-
-### Load from CDN
+## Load from CDN
 
 You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/raw).
 
-`https://cdn.jsdelivr.net/npm/@editorjs/raw`
+`https://cdn.jsdelivr.net/gh/naroh091/editorjs-raw-with-render-mode@latest/dist/bundle.js`
 
 Require this script on a page with CodeX Editor.
 
@@ -41,10 +26,10 @@ Require this script on a page with CodeX Editor.
 
 ## Usage
 
-Add a new Tool to the `tools` property of the CodeX Editor initial config.
+Add a new Tool to the `tools` property of the Editor.js initial config.
 
 ```javascript
-var editor = CodexEditor({
+let editor = new EditorJS({
   ...
   
   tools: {
@@ -56,11 +41,24 @@ var editor = CodexEditor({
 });
 ```
 
-## Config Params
+## i18n
 
-| Field       | Type     | Description                   |
-| ----------- | -------- | ------------------------------|
-| placeholder | `string` | Raw Tool's placeholder string |
+You can translate the Tool's UI by passing `i18n` object with custom translations to the Editor.js instance.
+
+```javascript
+i18n: {
+    messages: {
+        tools: {
+            Raw: {
+                'Enter HTML code': 'Introduce código HTML',
+                'Switch to render mode': 'Cambiar a modo visual',
+                'Switch to HTML mode': 'Cambiar a modo HTML'
+            }
+        }
+    }
+}
+```
+
 
 ## Output data
 

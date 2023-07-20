@@ -7,20 +7,26 @@
     "tool",
     "editorjs"
   ],
-  "description": "Raw HTML Tool for Editor.js",
+  "description": "Raw HTML Tool with render mode for Editor.js",
   "license": "MIT",
-  "repository": "https://github.com/editor-js/raw",
+  "repository": "https://github.com/Naroh091/editorjs-raw-with-render-mode",
   "main": "./dist/bundle.js",
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development --watch"
   },
-  "author": {
-    "name": "CodeX",
-    "email": "team@codex.so"
-  },
+  "authors": [
+    {
+      "name": "CodeX",
+      "email": "team@codex.so"
+    },
+    {
+      "name": "David Fernández Sancho",
+      "email": "dfernandez@maldita.es"
+    }
+  ],
   "devDependencies": {
-    "@babel/core": "^7.3.4",
+    "@babel/core": "7.18.6",
     "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.5",
     "css-loader": "^1.0.0",

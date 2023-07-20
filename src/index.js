@@ -9,6 +9,7 @@ import { IconHtml } from '@codexteam/icons';
  * Raw HTML Tool for CodeX Editor
  *
  * @author CodeX (team@codex.so)
+ * @author David Fernández Sancho (dfernandez@maldita.es)
  * @copyright CodeX 2018
  * @license The MIT License (MIT)
  */
@@ -78,7 +79,7 @@ export default class RawTool {
     this.api = api;
     this.readOnly = readOnly;
 
-    this.placeholder = config.placeholder || RawTool.DEFAULT_PLACEHOLDER;
+    this.placeholder = config.placeholder || this.api.i18n.t('Enter HTML code');
 
     this.CSS = {
       baseClass: this.api.styles.block,
@@ -91,8 +92,13 @@ export default class RawTool {
       html: data.html || '',
     };
 
+    this.mode = "html";
     this.textarea = null;
+    this.renderDiv = null;
     this.resizeDebounce = null;
+    this.switchButton = null;
+    this.wrapper = null;
+    this.updateRender = this.updateRender.bind(this);
   }
 
   /**
@@ -102,32 +108,92 @@ export default class RawTool {
    * @public
    */
   render() {
-    const wrapper = document.createElement('div');
+    if (!this.wrapper) {
+      this.wrapper = document.createElement('div');
+    } else {
+      while (this.wrapper.firstChild) {
+        this.wrapper.removeChild(this.wrapper.firstChild);
+      }
+    }
+
     const renderingTime = 100;
 
     this.textarea = document.createElement('textarea');
+    this.renderDiv = document.createElement('div');
 
-    wrapper.classList.add(this.CSS.baseClass, this.CSS.wrapper);
+    this.wrapper.classList.add(this.CSS.baseClass, this.CSS.wrapper);
 
     this.textarea.classList.add(this.CSS.textarea, this.CSS.input);
     this.textarea.textContent = this.data.html;
     this.textarea.placeholder = this.placeholder;
 
-    if (this.readOnly) {
-      this.textarea.disabled = true;
+    this.renderDiv.classList.add(this.CSS.wrapper);
+
+    this.switchButton = document.createElement('button');
+    this.switchButton.textContent = this.mode === 'html' ? this.api.i18n.t('Switch to render mode') : this.api.i18n.t('Switch to HTML mode');
+    this.switchButton.addEventListener('click', () => {
+      this.switchMode();
+    });
+
+    // Add Event Listener for MouseOver
+    this.switchButton.addEventListener('mouseover', function(){
+      this.style.backgroundColor = 'whitesmoke';
+    });
+
+// Add Event Listener for MouseOut
+    this.switchButton.addEventListener('mouseout', function(){
+      this.style.backgroundColor = '#ffffff'; // Back to original color
+    });
+
+    // Add some inline styles to the button
+    this.switchButton.style.backgroundColor = '#ffffff'; // White background
+    this.switchButton.style.color = '#888'; // Gray text
+    this.switchButton.style.borderRadius = '28px'; // Rounded corners
+    this.switchButton.style.border = '1px solid #888'; // Gray border
+    this.switchButton.style.padding = '5px 20px'; // Some padding
+    this.switchButton.style.cursor = 'pointer';
+    this.switchButton.style.outline = 'none'; // Remove focus outline
+    this.switchButton.style.marginTop = '12px'; // Remove focus outline
+
+
+    if (this.mode === 'html') {
+      this.textarea.style.display = 'block';
+      this.renderDiv.style.display = 'none';
     } else {
-      this.textarea.addEventListener('input', () => {
-        this.onInput();
-      });
+      this.textarea.style.display = 'none';
+      this.renderDiv.style.display = 'block';
+      this.updateRender();
     }
 
-    wrapper.appendChild(this.textarea);
+    // Always update this.data.html on input
+    this.textarea.addEventListener('input', () => {
+      this.data.html = this.textarea.value; // Store textarea's value
+      this.onInput();
+    });
+
+    // Disable textarea only in read-only mode
+    if (this.readOnly) {
+      this.textarea.disabled = true;
+    }
+
+    this.wrapper.appendChild(this.textarea);
+    this.wrapper.appendChild(this.renderDiv);
+    this.wrapper.appendChild(this.switchButton);
 
     setTimeout(() => {
       this.resize();
     }, renderingTime);
 
-    return wrapper;
+    return this.wrapper;
+  }
+
+  switchMode() {
+    this.mode = this.mode === 'html' ? 'render' : 'html';
+    this.render();
+  }
+
+  updateRender() {
+    this.renderDiv.innerHTML = this.textarea.value;
   }
 
   /**
@@ -141,16 +207,6 @@ export default class RawTool {
     return {
       html: rawToolsWrapper.querySelector('textarea').value,
     };
-  }
-
-  /**
-   * Default placeholder for RawTool's textarea
-   *
-   * @public
-   * @returns {string}
-   */
-  static get DEFAULT_PLACEHOLDER() {
-    return 'Enter HTML code';
   }
 
   /**
