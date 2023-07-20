@@ -189,6 +189,32 @@ export default class RawTool {
 
   switchMode() {
     this.mode = this.mode === 'html' ? 'render' : 'html';
+
+    if (this.mode === 'render') {
+      // Get all script tags from the HTML code
+      let parser = new DOMParser();
+      let htmlDoc = parser.parseFromString(this.data.html, 'text/html');
+      let scripts = htmlDoc.getElementsByTagName('script');
+
+      for (let script of scripts) {
+        // Create a new script tag
+        let newScript = document.createElement('script');
+
+        // Copy the attributes of the original script tag to the new one
+        for (let attr of script.attributes) {
+          newScript.setAttribute(attr.name, attr.value);
+        }
+
+        // If the script has inline code, also copy it to the new script tag
+        if (script.textContent) {
+          newScript.textContent = script.textContent;
+        }
+
+        // Append the new script tag to the renderDiv
+        this.renderDiv.appendChild(newScript);
+      }
+    }
+
     this.render();
   }
 
